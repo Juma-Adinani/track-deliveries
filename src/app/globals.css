@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive typography */
+h1, h2, h3 {
+  @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+}
+
+p, input, textarea {
+  @apply text-base md:text-lg lg:text-xl;
+}
+
+/* Input field styling for responsiveness */
+input, textarea {
+  @apply w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200;
+}
+
+/* Responsive padding for main container */
+.container {
+  @apply px-4 md:px-8 lg:px-16;
+}
+
+/* Responsive grid for layout */
+.grid-layout {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Responsive classes for margins and padding */
+  .responsive-padding {
+    @apply p-4 md:p-6 lg:p-8;
+  }
+
+  .responsive-margin {
+    @apply m-4 md:m-6 lg:m-8;
+  }
+
+  /* Example: Card responsive design */
+  .card {
+    @apply bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6;
+    @apply transition-all ease-in-out duration-300; /* Smooth transitions */
+  }
+
+  /* Responsive card */
+  .card-content {
+    @apply text-center text-sm md:text-base lg:text-lg;
+  }
+
+  /* Make images responsive */
+  .responsive-img {
+    @apply w-full h-auto;
+  }
+
+  /* Navbar responsive padding */
+  .navbar {
+    @apply py-4 px-6 md:px-8 lg:px-12 bg-primary text-white;
+  }
+}
+
+/* Dark mode-specific classes */
+.dark-mode {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+@media only screen and (max-width: 800px) {
+  .ratingTrip, .tripHistory {
+    width: 40%; /* Full width for better responsiveness */
+  }
+}
