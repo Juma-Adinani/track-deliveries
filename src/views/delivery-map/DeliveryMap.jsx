@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { Box, Container, Grid } from '@mui/material'
-import { tripsData } from '@/api/trips'
+import { tripsData } from '@/apis/trips'
 
 const customIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',

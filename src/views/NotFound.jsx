@@ -40,7 +40,7 @@ const NotFound = ({ mode }) => {
           Back to Home
         </Button>
       </div>
-      <Illustrations maskImg={{ src: miscBackground }} />
+      {/* <Illustrations maskImg={{ src: miscBackground }} /> */}
     </div>
   )
 }

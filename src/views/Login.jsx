@@ -1,11 +1,10 @@
 'use client'
 
-// React Imports
 import { useState } from 'react'
-
-// Next Imports
-import Link from 'next/link'
+import { observer } from 'mobx-react-lite'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -19,32 +18,25 @@ import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 
-// Component Imports
-import Logo from '@components/layout/shared/Logo'
-import Illustrations from '@components/Illustrations'
+// Store Import
+import authStore from '@/stores/authStores'
 
-// Config Imports
-import themeConfig from '@configs/themeConfig'
-
-// Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
-
-const Login = ({ mode }) => {
-  // States
+const Login = observer(({ mode }) => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-
-  // Vars
-  const darkImg = '/images/pages/auth-v1-mask-dark.png'
-  const lightImg = '/images/pages/auth-v1-mask-light.png'
-
-  // Hooks
   const router = useRouter()
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
+
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    router.push('/')
+
+    await authStore.login(email, password)
+
+    if (!authStore.error) {
+      router.push('/')
+    }
   }
 
   return (
@@ -52,20 +44,21 @@ const Login = ({ mode }) => {
       <Card className='flex flex-col sm:is-[450px]'>
         <CardContent className='p-6 sm:!p-12'>
           <Link href='/' className='flex justify-center items-center mbe-6'>
-            <Logo />
+            <Image src='/images/logo.png' alt='Logo' width={50} height={50} />
           </Link>
           <div className='flex flex-col gap-5'>
             <div>
-              <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
-              <Typography className='mbs-1'>Please sign-in to your account and start the adventure</Typography>
+              <Typography variant='h4'>{`Welcome Back!👋🏻`}</Typography>
+              <Typography className='mbs-1'>Please sign in to your account and start the adventure</Typography>
             </div>
             <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-5'>
-              <TextField autoFocus fullWidth label='Email' />
+              <TextField autoFocus fullWidth label='Email' value={email} onChange={e => setEmail(e.target.value)} />
               <TextField
                 fullWidth
                 label='Password'
-                id='outlined-adornment-password'
                 type={isPasswordShown ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
@@ -81,14 +74,15 @@ const Login = ({ mode }) => {
                   )
                 }}
               />
+              {authStore.error && <Typography color='error'>{authStore.error}</Typography>}
               <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
                 <FormControlLabel control={<Checkbox />} label='Remember me' />
                 <Typography className='text-end' color='primary' component={Link} href='/forgot-password'>
                   Forgot password?
                 </Typography>
               </div>
-              <Button fullWidth variant='contained' type='submit'>
-                Log In
+              <Button fullWidth variant='contained' type='submit' disabled={authStore.loading}>
+                {authStore.loading ? 'Logging in...' : 'Log In'}
               </Button>
               <div className='flex justify-center items-center flex-wrap gap-2'>
                 <Typography>New on our platform?</Typography>
@@ -96,28 +90,13 @@ const Login = ({ mode }) => {
                   Create an account
                 </Typography>
               </div>
-              <Divider className='gap-3'>or</Divider>
-              <div className='flex justify-center items-center gap-2'>
-                <IconButton size='small' className='text-facebook'>
-                  <i className='ri-facebook-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-twitter'>
-                  <i className='ri-twitter-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-github'>
-                  <i className='ri-github-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-googlePlus'>
-                  <i className='ri-google-fill' />
-                </IconButton>
-              </div>
+              <Divider className='gap-3 hidden'>or</Divider>
             </form>
           </div>
         </CardContent>
       </Card>
-      <Illustrations maskImg={{ src: authBackground }} />
     </div>
   )
-}
+})
 
 export default Login

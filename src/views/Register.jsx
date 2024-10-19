@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -16,26 +17,39 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Divider from '@mui/material/Divider'
 
 // Component Imports
-import Illustrations from '@components/Illustrations'
 import Logo from '@components/layout/shared/Logo'
 
-// Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
+// MobX Store Import
+import { observer } from 'mobx-react-lite'
+import authStore from '@/stores/authStores'
+import { Grid } from '@mui/material'
 
-const Register = ({ mode }) => {
-  // States
+const Register = observer(({ mode }) => {
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
-  // Vars
   const darkImg = '/images/pages/auth-v1-mask-dark.png'
   const lightImg = '/images/pages/auth-v1-mask-light.png'
 
-  // Hooks
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
+  const router = useRouter()
+
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    await authStore.register(username, email, password, firstName, lastName)
+
+    if (!authStore.error) {
+      router.push('/login')
+    }
+  }
 
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
@@ -46,14 +60,38 @@ const Register = ({ mode }) => {
           </Link>
           <Typography variant='h4'>Adventure starts here 🚀</Typography>
           <div className='flex flex-col gap-5'>
-            <Typography className='mbs-1'>Make your app management easy and fun!</Typography>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-5'>
-              <TextField autoFocus fullWidth label='Username' />
-              <TextField fullWidth label='Email' />
+            <Typography className='mbs-1'>
+              Sign up today and access electrical vehicles and affordable deliveries in your area
+            </Typography>
+            <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-5'>
+              <div>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label='First Name'
+                      value={firstName}
+                      onChange={e => setFirstName(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label='Last Name'
+                      value={lastName}
+                      onChange={e => setLastName(e.target.value)}
+                    />
+                  </Grid>
+                </Grid>
+              </div>
+              <TextField fullWidth label='Phone number' value={username} onChange={e => setUsername(e.target.value)} />
+              <TextField fullWidth label='Email' value={email} onChange={e => setEmail(e.target.value)} />
               <TextField
                 fullWidth
                 label='Password'
                 type={isPasswordShown ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>
@@ -80,37 +118,22 @@ const Register = ({ mode }) => {
                   </>
                 }
               />
-              <Button fullWidth variant='contained' type='submit'>
-                Sign Up
+              <Button fullWidth variant='contained' type='submit' disabled={authStore.loading}>
+                {authStore.loading ? 'Signing Up...' : 'Sign Up'}
               </Button>
+              {authStore.error && <Typography color='error'>{authStore.error}</Typography>}
               <div className='flex justify-center items-center flex-wrap gap-2'>
                 <Typography>Already have an account?</Typography>
                 <Typography component={Link} href='/login' color='primary'>
                   Sign in instead
                 </Typography>
               </div>
-              <Divider className='gap-3'>Or</Divider>
-              <div className='flex justify-center items-center gap-2'>
-                <IconButton size='small' className='text-facebook'>
-                  <i className='ri-facebook-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-twitter'>
-                  <i className='ri-twitter-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-github'>
-                  <i className='ri-github-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-googlePlus'>
-                  <i className='ri-google-fill' />
-                </IconButton>
-              </div>
             </form>
           </div>
         </CardContent>
       </Card>
-      <Illustrations maskImg={{ src: authBackground }} />
     </div>
   )
-}
+})
 
 export default Register
