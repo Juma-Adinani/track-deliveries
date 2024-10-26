@@ -82,6 +82,11 @@ const VerticalMenu = ({ scrollMenu }) => {
             Delivery map
           </MenuItem>
         </MenuSection>
+        <MenuSection>
+          <MenuItem href='/trip-list' icon={<i className='ri-map-2-line' />}>
+            Trips
+          </MenuItem>
+        </MenuSection>
         {/* <MenuSection label='Misc'>
           <MenuItem
             href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/foundation`}

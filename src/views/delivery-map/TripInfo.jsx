@@ -1,5 +1,5 @@
 'use client'
-import { tripsData } from '@/api/trips'
+import { tripsData } from '@/apis/trips'
 import { DirectionsCar } from '@mui/icons-material'
 import { Avatar, Box, Card, Grid, List, ListItem, ListItemText, Paper, Typography } from '@mui/material'
 import React from 'react'

@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { observer } from 'mobx-react-lite'
+
+
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+
+import { observer } from 'mobx-react-lite'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -21,7 +24,7 @@ import Divider from '@mui/material/Divider'
 // Store Import
 import authStore from '@/stores/authStores'
 
-const Login = observer(({ mode }) => {
+const Login = observer(() => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isPasswordShown, setIsPasswordShown] = useState(false)
