@@ -4,7 +4,8 @@ export const firebaseDynamicLinkPrefix =
     process.env.FIREBASE_DYNAMIC_LINK_PREFIX;
 export const config = {
     // API_URL: _DEV_ ? process.env.API_URL_DEV : process.env.API_URL,
-    API_URL: process.env.API_URL,
+    // API_URL: process.env.API_URL,
+    API_URL:"https://api.fikachu.com",
     timeInterval: {
         offline: 60e3, //rider not doing anything
         online: 6e3, //driver

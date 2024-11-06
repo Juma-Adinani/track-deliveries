@@ -1,29 +1,45 @@
 import { makeAutoObservable } from 'mobx'
-import axios from 'axios'
 import { config, url } from '@/apis/ApiUrls'
 
 class AuthStore {
   user = null
   loading = false
   error = null
+  token = localStorage.getItem('token') || null
 
   constructor() {
     makeAutoObservable(this)
+    if (this.token) {
+      this.fetchUserProfile()
+    }
   }
 
-  async login(email, password) {
+  async login(username, password) {
     this.loading = true
     this.error = null
 
     try {
-      const res = await axios.post(config.API_URL + "/" + url.login, {
-        email,
-        password
+      const response = await fetch(`${config.API_URL}/${url.login}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       })
-      this.user = res.data.user
-      console.log(res)
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Login failed, try again!')
+      }
+
+      const data = await response.json()
+      this.user = data.user
+      this.token = data.token
+
+      localStorage.setItem('token', this.token)
+      console.log('Logged in successfully', data)
     } catch (error) {
-      this.error = error.res?.data?.message || 'Login failed, Try again!'
+      this.error = error.message
     } finally {
       this.loading = false
     }
@@ -32,22 +48,71 @@ class AuthStore {
   async register(username, email, password, first_name, last_name) {
     this.loading = true
     this.error = null
+
     try {
-      const res = await axios.post(`${config.API_URL}/${url.register}`, {
-        username, email, password, first_name, last_name
+      const response = await fetch(`${config.API_URL}/${url.register}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          first_name,
+          last_name,
+        }),
       })
-      console.log(res)
-      this.user = res.data.user
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Registration failed, please try again!')
+      }
+
+      const data = await response.json()
+      this.user = data.user
+      this.token = data.token
+
+      // Store the token in localStorage
+      localStorage.setItem('token', this.token)
+      console.log('Registered successfully', data)
     } catch (error) {
       console.error(error)
-      this.error = error.res?.data?.message || 'Registration failed, please try again!'
+      this.error = error.message
     } finally {
       this.loading = false
     }
   }
 
+  async fetchUserProfile() {
+    if (!this.token) return
+
+    try {
+      const response = await fetch(`${config.API_URL}/${url.profile}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        this.user = data.user
+      } else {
+        console.log("Failed to fetch user profile");
+        // throw new Error('Failed to fetch user profile')
+      }
+    } catch (error) {
+      this.error = error.message
+    }
+  }
+
   logout() {
     this.user = null
+    this.token = null
+    localStorage.removeItem('token')
+    console.log('Logged out successfully')
   }
 }
 

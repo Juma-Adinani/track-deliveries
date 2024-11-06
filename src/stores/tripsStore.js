@@ -1,29 +1,46 @@
-import { config, url } from "@/apis/ApiUrls";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx'
+import { config, url } from '@/apis/ApiUrls'
+import authStore from './authStores'
 
 class TripStore {
-    trips = [];
-    loading = [];
-    error = null;
+  trips = []
+  loading = false
+  error = null
 
-    constructor() {
-        makeAutoObservable(this)
-    }
+  constructor() {
+    makeAutoObservable(this)
+  }
 
-    async getTrips() {
-        this.loading = true
-        this.error
-        try {
-            const res = await axios.get(config.API_URL + '/' + url.trips.Trip);
-            console.log(res.data)
-        } catch (error) {
-            console.error(error)
-            this.error = error.response?.data?.message || 'Something went wrong!'
-        } finally {
-            this.loading = false
-        }
+  async getTrips() {
+    this.loading = true
+    this.error = null
+
+    try {
+      const response = await fetch(`${config.API_URL}/${url.trips.Trip}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authStore.token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error("Something went wrong!: " + JSON.stringify(errorData))
+        throw new Error(errorData.message || 'Failed to fetch trips')
+      }
+
+      const data = await response.json()
+      this.trips = data
+      console.log('Fetched trips successfully', data)
+    } catch (error) {
+      console.error(error)
+      this.error = error.message
+    } finally {
+      this.loading = false
     }
+  }
 }
 
-const tripStore = new TripStore();
+const tripStore = new TripStore()
 export default tripStore

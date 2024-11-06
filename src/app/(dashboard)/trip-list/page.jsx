@@ -1,70 +1,110 @@
-"use client"
+'use client'
 
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import tripStore from '@/stores/tripsStore'
-import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material'
-
-const dummyData = [
-  {
-    id: 1,
-    pickup: 'Makumbusho',
-    destination: 'Posta',
-    distance: '12 km',
-    price: 'TZS 15,000'
-  },
-  {
-    id: 2,
-    pickup: 'Kitaambaa Cheupe - Sinza',
-    destination: 'Kitambaa Cheupe - Tabata',
-    distance: '8 km',
-    price: 'TZS 10,000'
-  },
-  {
-    id: 3,
-    pickup: 'Masaki',
-    destination: 'Airport',
-    distance: '15 km',
-    price: '20,000,000'
-  }
-]
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  IconButton,
+  InputBase,
+  Divider,
+  CircularProgress
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import FilterListIcon from '@mui/icons-material/FilterList'
 
 const TripList = observer(() => {
-  const [trips, setTrips] = useState(dummyData)
+  const [filter, setFilter] = useState('All')
+  const [trips, setTrips] = useState([])
+
+  const getTrips = async () => {
+    await tripStore.getTrips()
+    setTrips(tripStore.trips)
+  }
 
   useEffect(() => {
-    tripStore.getTrips().then(data => setTrips(data || dummyData))
+    getTrips()
   }, [])
+
+  console.log('The trips loaded are: ' + JSON.stringify(trips))
 
   return (
     <Box className='p-4 md:p-8 min-h-screen'>
-      <Typography variant='h4' className='font-bold mb-6 text-center'>
-        Available Trips
-      </Typography>
+      {/* Search and Filter Bar */}
+      <Box display='flex' alignItems='center' justifyContent='space-between' mb={2}>
+        <IconButton>
+          <SearchIcon />
+        </IconButton>
+        <InputBase placeholder='Search...' fullWidth />
+        <IconButton>
+          <FilterListIcon />
+        </IconButton>
+      </Box>
 
-      <Grid container spacing={4}>
+      {/* Filter Buttons */}
+      <Box display='flex' justifyContent='center' mb={3}>
+        {['All', 'Pending', 'Processing', 'Accepted'].map(category => (
+          <Button
+            key={category}
+            onClick={() => setFilter(category)}
+            variant={filter === category ? 'contained' : 'outlined'}
+            sx={{
+              borderRadius: 20,
+              mx: 0.5,
+              textTransform: 'none',
+              fontSize: '0.9rem',
+              fontWeight: filter === category ? 'bold' : 'normal'
+            }}
+          >
+            {category}
+          </Button>
+        ))}
+      </Box>
+
+      {/* Loading Indicator */}
+      {tripStore.loading && (
+        <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
+          <CircularProgress />
+          <Typography variant='body2' ml={2}>
+            Loading trips...
+          </Typography>
+        </Box>
+      )}
+
+      {/* Error Message */}
+      {tripStore.error && (
+        <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
+          <Typography variant='body2' color='error'>
+            {tripStore.error}
+          </Typography>
+        </Box>
+      )}
+
+      {/* Trip List */}
+      <Grid container spacing={2}>
         {trips.map(trip => (
-          <Grid item xs={12} md={4} key={trip.id}>
-            <Card className='shadow-lg hover:shadow-xl transition-shadow duration-200'>
+          <Grid item xs={12} key={trip.id}>
+            <Card variant='outlined'>
               <CardContent>
-                <Typography variant='h6' className='font-semibold mb-2'>
-                  From: {trip.pickup}
+                <Typography variant='body1' fontWeight='bold'>
+                  {trip.pickup}
                 </Typography>
-                <Typography variant='h6' className='font-semibold mb-2'>
-                  To: {trip.destination}
+                <Typography variant='body2' color='textSecondary'>
+                  {trip.date} • {trip.type}
                 </Typography>
-                <Typography className='mb-1'>Distance: {trip.distance}</Typography>
-                <Typography className='mb-4'>Price: {trip.price}</Typography>
-
-                <Button
-                  variant='contained'
-                  color='primary'
-                  className='w-full mt-4'
-                  onClick={() => alert(`Viewing details for trip ${trip.id}`)}
-                >
-                  View Details
-                </Button>
+                <Typography variant='body2' color='textSecondary' mb={1}>
+                  {trip.price} {trip.status && `• ${trip.status}`}
+                </Typography>
+                {trip.additionalInfo && (
+                  <Typography variant='body2' color='textSecondary'>
+                    {trip.additionalInfo}
+                  </Typography>
+                )}
               </CardContent>
             </Card>
           </Grid>
