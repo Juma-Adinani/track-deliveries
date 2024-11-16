@@ -16,7 +16,35 @@ class TripStore {
     this.error = null
 
     try {
-      const response = await fetch(`${config.API_URL}${url.trips.Trip}36/`, {
+      const response = await fetch(`${config.API_URL}${url.trips.Trip}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error('Something went wrong!: ' + JSON.stringify(errorData))
+      }
+
+      const data = await response.json()
+      this.trips = data.results
+    } catch (error) {
+      console.error('Error fetching trips:', error)
+      this.error = error.message || 'Unknown error occurred'
+    } finally {
+      this.loading = false
+    }
+  }
+
+  async getTripDetails(tripId) {
+    this.loading = true
+    this.error = null
+
+    try {
+      const response = await fetch(`${config.API_URL}${url.trips.Trip}${tripId}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

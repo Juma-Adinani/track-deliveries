@@ -45,7 +45,7 @@ class AuthStore {
         localStorage.setItem('token', this.token)
       }
 
-      console.log('Logged in successfully', data)
+      console.log('Logged in successfully', JSON.stringify(data))
     } catch (error) {
       this.error = error.message
       console.error('Login error:', error)
