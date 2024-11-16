@@ -16,26 +16,24 @@ class TripStore {
     this.error = null
 
     try {
-      const response = await fetch(`${config.API_URL}/${url.trips.Trip}`, {
+      const response = await fetch(`${config.API_URL}${url.trips.Trip}36/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authStore.token}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error("Something went wrong!: " + JSON.stringify(errorData))
-        throw new Error(errorData.message || 'Failed to fetch trips')
+        throw new Error('Something went wrong!: ' + JSON.stringify(errorData))
       }
 
       const data = await response.json()
       this.trips = data
-      console.log('Fetched trips successfully', data)
     } catch (error) {
-      console.error(error)
-      this.error = error.message
+      console.error('Error fetching trips:', error)
+      this.error = error.message || 'Unknown error occurred'
     } finally {
       this.loading = false
     }

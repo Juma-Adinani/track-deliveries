@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import tripStore from '@/stores/tripsStore'
 import {
   Box,
   Typography,
@@ -10,45 +9,44 @@ import {
   Card,
   CardContent,
   Grid,
-  IconButton,
-  InputBase,
-  Divider,
   CircularProgress
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-import FilterListIcon from '@mui/icons-material/FilterList'
+import tripStore from '../../../stores/tripsStore'
+
+const formatDate = (dateString) => {
+  const options = {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  }
+  return new Date(dateString).toLocaleString('en-US', options).toUpperCase()
+}
 
 const TripList = observer(() => {
   const [filter, setFilter] = useState('All')
   const [trips, setTrips] = useState([])
 
   const getTrips = async () => {
-    await tripStore.getTrips()
-    setTrips(tripStore.trips)
+    try {
+      await tripStore.getTrips()
+      setTrips(tripStore.trips)
+    } catch (error) {
+      console.log('There is an error: ', error)
+    }
   }
 
   useEffect(() => {
     getTrips()
   }, [])
 
-  console.log('The trips loaded are: ' + JSON.stringify(trips))
-
   return (
-    <Box className='p-4 md:p-8 min-h-screen'>
-      {/* Search and Filter Bar */}
-      <Box display='flex' alignItems='center' justifyContent='space-between' mb={2}>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
-        <InputBase placeholder='Search...' fullWidth />
-        <IconButton>
-          <FilterListIcon />
-        </IconButton>
-      </Box>
-
+    <Box className="p-4 md:p-8 min-h-screen">
       {/* Filter Buttons */}
-      <Box display='flex' justifyContent='center' mb={3}>
-        {['All', 'Pending', 'Processing', 'Accepted'].map(category => (
+      <Box display="flex" justifyContent="center" mb={3}>
+        {['All', 'Pending', 'Processing', 'Accepted'].map((category) => (
           <Button
             key={category}
             onClick={() => setFilter(category)}
@@ -58,7 +56,7 @@ const TripList = observer(() => {
               mx: 0.5,
               textTransform: 'none',
               fontSize: '0.9rem',
-              fontWeight: filter === category ? 'bold' : 'normal'
+              fontWeight: filter === category ? 'bold' : 'normal',
             }}
           >
             {category}
@@ -68,9 +66,9 @@ const TripList = observer(() => {
 
       {/* Loading Indicator */}
       {tripStore.loading && (
-        <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
+        <Box display="flex" justifyContent="center" alignItems="center" mb={3}>
           <CircularProgress />
-          <Typography variant='body2' ml={2}>
+          <Typography variant="body2" ml={2}>
             Loading trips...
           </Typography>
         </Box>
@@ -78,8 +76,8 @@ const TripList = observer(() => {
 
       {/* Error Message */}
       {tripStore.error && (
-        <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
-          <Typography variant='body2' color='error'>
+        <Box display="flex" justifyContent="center" alignItems="center" mb={3}>
+          <Typography variant="body2" color="error">
             {tripStore.error}
           </Typography>
         </Box>
@@ -87,24 +85,43 @@ const TripList = observer(() => {
 
       {/* Trip List */}
       <Grid container spacing={2}>
-        {trips.map(trip => (
+        {trips.map((trip) => (
           <Grid item xs={12} key={trip.id}>
-            <Card variant='outlined'>
+            <Card variant="outlined">
               <CardContent>
-                <Typography variant='body1' fontWeight='bold'>
-                  {trip.pickup}
+                <Typography variant="body1" fontWeight="bold">
+                  {trip.pickup ?? 'pickup'}
                 </Typography>
-                <Typography variant='body2' color='textSecondary'>
-                  {trip.date} • {trip.type}
+                <Typography variant="body2" color="textSecondary">
+                  <span>
+                    <strong>Start Point: </strong>
+                    {trip.start_point_address ?? 'start'}
+                  </span>
                 </Typography>
-                <Typography variant='body2' color='textSecondary' mb={1}>
-                  {trip.price} {trip.status && `• ${trip.status}`}
+                <Typography variant="body2" color="textSecondary">
+                  <span>
+                    <strong>End Point: </strong>
+                    {trip.end_point_address ?? 'end'}
+                  </span>
                 </Typography>
-                {trip.additionalInfo && (
-                  <Typography variant='body2' color='textSecondary'>
-                    {trip.additionalInfo}
+                <Typography variant="body2" color="textSecondary" mb={1}>
+                  <span>
+                    <strong>Route status: </strong>
+                    {trip.status && `${trip.status}`}
+                  </span>
+                </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    <span>
+                      <strong>Cargo: </strong>
+                      {'note'}
+                    </span>
                   </Typography>
-                )}
+                <Typography variant="body2" color="textSecondary">
+                  <span>
+                    <strong>Date: </strong>
+                    {formatDate(trip.created ?? '2024-05-23T16:37:05.454496+03:00')}
+                  </span>
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
