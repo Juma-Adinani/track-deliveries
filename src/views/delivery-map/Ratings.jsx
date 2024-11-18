@@ -1,44 +1,64 @@
-'use client'
-import { Button, Grid, Paper, Rating, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+'use client';
+
+import { Button, Grid, Rating, TextField, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import tripStore from '@/stores/tripsStore';
 
 export default function RatingComponent() {
-  const [rating, setRating] = useState(null)
-  const [comment, setComment] = useState('')
+  const [rating, setRating] = useState(null);
+  const [comment, setComment] = useState('');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user?.id;
 
-  const handleRatingChange = event => {
-    setRating(newValue)
-  }
+  const handleRatingChange = (event, newValue) => {
+    setRating(newValue);
+  };
 
-  const handleCommentChange = event => {
-    setComment(event.target.value)
-  }
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
+  };
 
-  const handleSubmitRating = () => {
-    console.log('Rating:', rating)
-    console.log('Comment:', comment)
-    setComment('')
-  }
+  const handleSubmitRating = async () => {
+    if (!rating || !comment) {
+      alert('Please provide a rating and a comment.');
+      return;
+    }
+
+    try {
+      await tripStore.rateTheTrip(rating, comment, userId);
+      alert('Rating submitted successfully!');
+      setRating(null);
+      setComment('');
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
+    }
+  };
 
   return (
     <Grid>
-      <Typography variant='h6' className='mb-2 font-bold'>
+      <Typography variant="h6" className="mb-2 font-bold">
         Rate Your Trip
       </Typography>
-      <Rating name='trip-rating' value={rating} onChange={handleRatingChange} className='mb-2' />
+      <Rating
+        name="trip-rating"
+        value={rating}
+        onChange={handleRatingChange}
+        className="mb-2"
+      />
       <TextField
-        label='Comment'
+        label="Comment"
         multiline
         rows={2}
-        variant='outlined'
+        variant="outlined"
         fullWidth
         value={comment}
         onChange={handleCommentChange}
-        className='mb-2'
+        className="mb-2"
       />
-      <Button size='small' variant='contained' onClick={handleSubmitRating} color='primary'>
+      <Button size="small" variant="contained" onClick={handleSubmitRating} color="primary">
         Submit
       </Button>
     </Grid>
-  )
+  );
 }

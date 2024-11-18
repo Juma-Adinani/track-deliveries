@@ -43,6 +43,7 @@ class AuthStore {
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', this.token)
+        localStorage.setItem('user', JSON.stringify(this.user));
       }
 
       console.log('Logged in successfully', JSON.stringify(data))

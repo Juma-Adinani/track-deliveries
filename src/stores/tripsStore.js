@@ -66,6 +66,40 @@ class TripStore {
       this.loading = false
     }
   }
+
+  async rateTheTrip(rateValue, comment, userId) {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      const response = await fetch(`${config.API_URL}${url.reviews.Review}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authStore.token}`,
+        },
+        body: JSON.stringify({
+          rating: rateValue,
+          comment: comment,
+          reviewing: userId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error('Error rating the trip: ' + JSON.stringify(errorData));
+      }
+
+      const data = await response.json();
+      console.log('Trip rated successfully:', JSON.stringify(data));
+      return data;
+    } catch (error) {
+      console.error('Error submitting trip rating:', error);
+      this.error = error.message || 'Failed to rate the trip';
+    } finally {
+      this.loading = false;
+    }
+  }
 }
 
 const tripStore = new TripStore()
