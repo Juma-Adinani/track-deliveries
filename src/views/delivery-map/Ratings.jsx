@@ -4,7 +4,7 @@ import { Button, Grid, Rating, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import tripStore from '@/stores/tripsStore';
 
-export default function RatingComponent() {
+export default function RatingComponent({driverId}) {
   const [rating, setRating] = useState(null);
   const [comment, setComment] = useState('');
   const user = JSON.parse(localStorage.getItem('user'));
@@ -25,7 +25,8 @@ export default function RatingComponent() {
     }
 
     try {
-      await tripStore.rateTheTrip(rating, comment, userId);
+      // await tripStore.rateTheTrip(rating, comment, userId);
+      await tripStore.rateTheTrip(rating, comment, driverId)
       alert('Rating submitted successfully!');
       setRating(null);
       setComment('');
