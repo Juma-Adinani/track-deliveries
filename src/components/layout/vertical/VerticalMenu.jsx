@@ -52,9 +52,9 @@ const VerticalMenu = ({ scrollMenu }) => {
         renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
         menuSectionStyles={menuSectionStyles(theme)}
       >
-        <MenuItem href='/' icon={<i className='ri-home-smile-line' />}>
+        {/* <MenuItem href='/' icon={<i className='ri-home-smile-line' />}>
           Dashboard
-        </MenuItem>
+        </MenuItem> */}
         {/* <MenuSection label='Apps & Pages'>
           <MenuItem href='/account-settings' icon={<i className='ri-user-settings-line' />}>
             Account Settings
