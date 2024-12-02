@@ -11,12 +11,12 @@ class TripStore {
     makeAutoObservable(this)
   }
 
-  async getTrips() {
+  async getTrips(status) {
     this.loading = true
     this.error = null
 
     try {
-      const response = await fetch(`${config.API_URL}${url.trips.Trip}`, {
+      const response = await fetch(`${config.API_URL}${url.trips.Trip}?status=${status}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -31,6 +31,7 @@ class TripStore {
 
       const data = await response.json()
       this.trips = data.results
+      console.log(JSON.stringify(this.trips))
     } catch (error) {
       console.error('Error fetching trips:', error)
       this.error = error.message || 'Unknown error occurred'

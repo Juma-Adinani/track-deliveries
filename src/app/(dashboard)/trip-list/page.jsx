@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Typography, Button, Card, CardContent, Grid, CircularProgress } from '@mui/material'
 import tripStore from '../../../stores/tripsStore'
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 const formatDate = dateString => {
   const options = {
@@ -19,18 +19,18 @@ const formatDate = dateString => {
 }
 
 const TripList = observer(() => {
-  const [filter, setFilter] = useState('All')
+  const [filter, setFilter] = useState('')
   const [trips, setTrips] = useState([])
 
   const router = useRouter()
 
   const handleNavigation = tripId => {
-    router.push(`/trip-details/${tripId}`) // Navigate to the dynamic route
+    router.push(`/trip-details/${tripId}`)
   }
 
   const getTrips = async () => {
     try {
-      await tripStore.getTrips()
+      await tripStore.getTrips(filter)
       setTrips(tripStore.trips)
     } catch (error) {
       console.log('There is an error: ', error)
@@ -39,23 +39,30 @@ const TripList = observer(() => {
 
   useEffect(() => {
     getTrips()
-  }, [])
+  }, [filter])
+
+  const filterMapping = {
+    All: '',
+    Pending: 'pending',
+    Processing: 'processing',
+    Accepted: 'accepted'
+  }
 
   return (
     <Box className='p-4 md:p-8 min-h-screen'>
       {/* Filter Buttons */}
       <Box display='flex' justifyContent='center' mb={3}>
-        {['All', 'Pending', 'Processing', 'Accepted'].map(category => (
+        {Object.keys(filterMapping).map(category => (
           <Button
             key={category}
-            onClick={() => setFilter(category)}
-            variant={filter === category ? 'contained' : 'outlined'}
+            onClick={() => setFilter(filterMapping[category])}
+            variant={filter === filterMapping[category] ? 'contained' : 'outlined'}
             sx={{
               borderRadius: 20,
               mx: 0.5,
               textTransform: 'none',
               fontSize: '0.9rem',
-              fontWeight: filter === category ? 'bold' : 'normal'
+              fontWeight: filter === filterMapping[category] ? 'bold' : 'normal'
             }}
           >
             {category}
@@ -78,6 +85,15 @@ const TripList = observer(() => {
         <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
           <Typography variant='body2' color='error'>
             {tripStore.error}
+          </Typography>
+        </Box>
+      )}
+
+      {/* No Trips Message */}
+      {!tripStore.loading && trips.length === 0 && (
+        <Box display='flex' justifyContent='center' alignItems='center' mb={3}>
+          <Typography variant='body1' color='textSecondary'>
+            No trips available at the moment.
           </Typography>
         </Box>
       )}
@@ -121,12 +137,7 @@ const TripList = observer(() => {
                     {formatDate(trip.created ?? '2024-05-23T16:37:05.454496+03:00')}
                   </span>
                 </Typography>
-                <Button
-                  onClick={() => handleNavigation(trip.id)}
-                  variant='contained'
-                  color='primary'
-                  sx={{ mt: 2 }}
-                >
+                <Button onClick={() => handleNavigation(trip.id)} variant='contained' color='primary' sx={{ mt: 2 }}>
                   View Trip Details
                 </Button>
               </CardContent>

@@ -147,11 +147,11 @@ const TripDetails = observer(() => {
         <CardContent>
           <Typography variant='body1'>
             <strong>Pickup: </strong>
-            {tripData.vehicle_trips?.[0]?.startAddress || 'N/A'}
+            {tripData.start_point_address || 'N/A'}
           </Typography>
           <Typography variant='body1'>
             <strong>Dropoff: </strong>
-            {tripData.vehicle_trips?.[0]?.endAddress || 'N/A'}
+            {tripData.end_point_address || 'N/A'}
           </Typography>
         </CardContent>
       </Card>
