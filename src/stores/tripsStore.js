@@ -60,6 +60,7 @@ class TripStore {
 
       const data = await response.json()
       this.trips = data
+      console.log(JSON.stringify(this.trips))
     } catch (error) {
       console.error('Error fetching trips:', error)
       this.error = error.message || 'Unknown error occurred'

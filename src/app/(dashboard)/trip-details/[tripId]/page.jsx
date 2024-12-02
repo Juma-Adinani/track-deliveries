@@ -10,7 +10,6 @@ import tripStore from '@/stores/tripsStore'
 import RatingComponent from '@/views/delivery-map/Ratings'
 import { useParams, useRouter } from 'next/navigation'
 
-// Custom marker icon for Leaflet
 const markerIcon = new L.Icon({
   iconUrl: 'https://cdn-icons-png.flaticon.com/512/64/64113.png',
   iconSize: [25, 41],
@@ -28,7 +27,6 @@ const TripDetails = observer(() => {
   const [mapMarkers, setMapMarkers] = useState([])
 
   const getTripDetails = async () => {
-    console.log(tripId)
     try {
       if (!tripId) return
 
@@ -36,34 +34,26 @@ const TripDetails = observer(() => {
       await tripStore.getTripDetails(tripId)
       const trips = tripStore.trips
 
-      // Add markers logic
       const markers = []
-      if (trips.vehicle_trips && trips.vehicle_trips.length > 0) {
-        trips.vehicle_trips.forEach(trip => {
-          markers.push({
-            position: [trip.startLat, trip.startLon],
-            popup: `Start: ${trip.startAddress || 'Unknown'}`
-          })
-          markers.push({
-            position: [trip.endLat, trip.endLon],
-            popup: `End: ${trip.endAddress || 'Unknown'}`
-          })
-        })
-      } else if (trips.user_device_trips && trips.user_device_trips.length > 0) {
-        trips.user_device_trips.forEach(trip => {
-          markers.push({
-            position: [trip.startLat, trip.startLon],
-            popup: `Start: ${trip.startAddress || 'Unknown'}`
-          })
-          markers.push({
-            position: [trip.endLat, trip.endLon],
-            popup: `End: ${trip.endAddress || 'Unknown'}`
-          })
-        })
-      } else if (trips.current_location) {
+
+      if (trips.current_location) {
         markers.push({
           position: [trips.current_location.coordinates[1], trips.current_location.coordinates[0]],
-          popup: 'Current Location'
+          popup: 'current Location'
+        })
+      }
+
+      if (trips.start_point) {
+        markers.push({
+          position: [trips.start_point.coordinates[1], trips.start_point.coordinates[0]],
+          popup: trips.start_point_address
+        })
+      }
+
+      if (trips.end_point) {
+        markers.push({
+          position: [trips.end_point.coordinates[1], trips.end_point.coordinates[0]],
+          popup: trips.end_point_address
         })
       }
 
@@ -116,7 +106,19 @@ const TripDetails = observer(() => {
   }
 
   return (
-    <Box className='p-4' sx={{backgroundColor:"transparent", minHeight: '100vh' }}>
+    <Box className='p-4' sx={{ backgroundColor: 'transparent', minHeight: '100vh' }}>
+      {/* A Map */}
+      <Card variant='outlined' sx={{ mb: 3 }}>
+        <MapContainer center={[-6.8132633, 39.2784077]} zoom={13} style={{ height: '500px', width: '100%' }}>
+          <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+          {mapMarkers.map((marker, index) => (
+            <Marker key={index} position={marker.position} icon={markerIcon}>
+              <Popup>{marker.popup}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </Card>
+
       {/* Trip Details */}
       <Card variant='outlined' sx={{ mb: 3 }}>
         <CardContent>
@@ -130,16 +132,6 @@ const TripDetails = observer(() => {
             {formatDate(tripData.created)} • {tripData.status || 'Unknown'}
           </Typography>
         </CardContent>
-
-        {/* Map */}
-        <MapContainer center={[-6.743, 39.24]} zoom={13} style={{ height: '300px', width: '100%' }}>
-          <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-          {mapMarkers.map((marker, index) => (
-            <Marker key={index} position={marker.position} icon={markerIcon}>
-              <Popup>{marker.popup}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
       </Card>
 
       {/* Trip Route */}
@@ -184,8 +176,8 @@ const TripDetails = observer(() => {
       </Card>
 
       {/* Help Button */}
-      <Button variant='contained' color='primary' fullWidth onClick={() => alert('Get Help with Trip')}>
-        Get Help with Trip
+      <Button variant='contained' color='primary' onClick={() => alert('Get Help with Trip')}>
+        Get Help with Trip{' '}
       </Button>
     </Box>
   )
