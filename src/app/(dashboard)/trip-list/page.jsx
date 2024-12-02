@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Box, Typography, Button, Card, CardContent, Grid, CircularProgress } from '@mui/material'
+import { Box, Typography, Button, Card, CardContent, Grid, CircularProgress, IconButton } from '@mui/material'
+import { ArrowForward } from '@mui/icons-material'
 import tripStore from '../../../stores/tripsStore'
 import { useRouter } from 'next/navigation'
 
@@ -49,20 +50,33 @@ const TripList = observer(() => {
   }
 
   return (
-    <Box className='p-4 md:p-8 min-h-screen'>
+    <Box className='md:p-8 min-h-screen'>
+      {/* Header */}
+      <Box textAlign='center' mb={5}>
+        <Typography variant='h4' fontWeight='bold' color='primary' mb={2}>
+          Your Trips
+        </Typography>
+        <Typography variant='body1' color='textSecondary'>
+          Explore and manage your trips effortlessly.
+        </Typography>
+      </Box>
+
       {/* Filter Buttons */}
-      <Box display='flex' justifyContent='center' mb={3}>
+      <Box display='flex' justifyContent='center' mb={3} flexWrap='wrap'>
         {Object.keys(filterMapping).map(category => (
           <Button
             key={category}
             onClick={() => setFilter(filterMapping[category])}
             variant={filter === filterMapping[category] ? 'contained' : 'outlined'}
+            color='primary'
             sx={{
               borderRadius: 20,
               mx: 0.5,
+              my: 0.5,
               textTransform: 'none',
               fontSize: '0.9rem',
-              fontWeight: filter === filterMapping[category] ? 'bold' : 'normal'
+              fontWeight: filter === filterMapping[category] ? 'bold' : 'normal',
+              px: 2.5
             }}
           >
             {category}
@@ -99,47 +113,54 @@ const TripList = observer(() => {
       )}
 
       {/* Trip List */}
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         {trips.map(trip => (
-          <Grid item xs={12} key={trip.id}>
-            <Card variant='outlined'>
+          <Grid item xs={12} md={6} lg={4} key={trip.id}>
+            <Card
+              sx={{
+                borderRadius: 3,
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                transition: 'transform 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)'
+                }
+              }}
+            >
               <CardContent>
-                <Typography variant='body1' fontWeight='bold'>
-                  {trip.pickup ?? 'pickup'}
-                </Typography>
-                <Typography variant='body2' color='textSecondary'>
-                  <span>
-                    <strong>Start Point: </strong>
-                    {trip.start_point_address ?? 'start'}
-                  </span>
-                </Typography>
-                <Typography variant='body2' color='textSecondary'>
-                  <span>
-                    <strong>End Point: </strong>
-                    {trip.end_point_address ?? 'end'}
-                  </span>
+                <Typography variant='body1' fontWeight='bold' color='primary' gutterBottom>
+                  {trip.pickup ?? 'Pickup Location'}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' mb={1}>
-                  <span>
-                    <strong>Route status: </strong>
-                    {trip.status && `${trip.status}`}
-                  </span>
+                  <strong>Start Point:</strong> {trip.start_point_address ?? 'Unknown'}
                 </Typography>
-                <Typography variant='body2' color='textSecondary'>
-                  <span>
-                    <strong>Cargo: </strong>
-                    {'note'}
-                  </span>
+                <Typography variant='body2' color='textSecondary' mb={1}>
+                  <strong>End Point:</strong> {trip.end_point_address ?? 'Unknown'}
                 </Typography>
-                <Typography variant='body2' color='textSecondary'>
-                  <span>
-                    <strong>Date: </strong>
-                    {formatDate(trip.created ?? '2024-05-23T16:37:05.454496+03:00')}
-                  </span>
+                <Typography variant='body2' color='textSecondary' mb={1}>
+                  <strong>Status:</strong> {trip.status ?? 'Pending'}
                 </Typography>
-                <Button onClick={() => handleNavigation(trip.id)} variant='contained' color='primary' sx={{ mt: 2 }}>
-                  View Trip Details
-                </Button>
+                <Typography variant='body2' color='textSecondary' mb={2}>
+                  <strong>Date:</strong> {formatDate(trip.created)}
+                </Typography>
+                <Box display='flex' justifyContent='space-between' alignItems='center'>
+                  <Button
+                    onClick={() => handleNavigation(trip.id)}
+                    variant='contained'
+                    color='primary'
+                    size='small'
+                    sx={{
+                      borderRadius: 20,
+                      textTransform: 'none',
+                      fontWeight: 'bold',
+                      px: 3
+                    }}
+                  >
+                    View Details
+                  </Button>
+                  <IconButton onClick={() => handleNavigation(trip.id)} color='primary'>
+                    <ArrowForward />
+                  </IconButton>
+                </Box>
               </CardContent>
             </Card>
           </Grid>
