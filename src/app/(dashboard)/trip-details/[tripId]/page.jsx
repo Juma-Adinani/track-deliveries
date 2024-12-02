@@ -116,7 +116,7 @@ const TripDetails = observer(() => {
   }
 
   return (
-    <Box className='p-4' sx={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <Box className='p-4' sx={{backgroundColor:"transparent", minHeight: '100vh' }}>
       {/* Trip Details */}
       <Card variant='outlined' sx={{ mb: 3 }}>
         <CardContent>
