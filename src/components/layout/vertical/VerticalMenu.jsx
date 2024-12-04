@@ -77,11 +77,11 @@ const VerticalMenu = ({ scrollMenu }) => {
             Form Layouts
           </MenuItem>
         </MenuSection> */}
-        <MenuSection label='Deliveries'>
+        {/* <MenuSection label='Deliveries'>
           <MenuItem href='/track-delivery' icon={<i className='ri-map-2-line' />}>
             Delivery map
           </MenuItem>
-        </MenuSection>
+        </MenuSection> */}
         <MenuSection>
           <MenuItem href='/trip-list' icon={<i className='ri-map-2-line' />}>
             Trip list
