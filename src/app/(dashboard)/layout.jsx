@@ -1,28 +1,62 @@
-// Layout Imports
-import LayoutWrapper from '@layouts/LayoutWrapper'
-import VerticalLayout from '@layouts/VerticalLayout'
+"use client";
 
-// Component Imports
-import Providers from '@components/Providers'
-import Navigation from '@components/layout/vertical/Navigation'
-import Navbar from '@components/layout/vertical/Navbar'
-import VerticalFooter from '@components/layout/vertical/Footer'
+import * as React from "react";
 
-const Layout = async ({ children }) => {
-  // Vars
-  const direction = 'ltr'
+import { alpha } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import {
+  chartsCustomizations,
+  dataGridCustomizations,
+  datePickersCustomizations,
+  treeViewCustomizations,
+} from "../theme/customizations";
+import AppNavbar from "@/components/AppNavbar";
+import SideMenu from "@/components/SideMenu";
+import Header from "@/components/Header";
+import AppTheme from "@/shared-theme/AppTheme";
 
+const xThemeComponents = {
+  ...chartsCustomizations,
+  ...dataGridCustomizations,
+  ...datePickersCustomizations,
+  ...treeViewCustomizations,
+};
+
+export default function Layout({ children }) {
   return (
-    <Providers direction={direction}>
-      <LayoutWrapper
-        verticalLayout={
-          <VerticalLayout navigation={<Navigation />} navbar={<Navbar />} footer={<VerticalFooter />}>
+    <AppTheme themeComponents={xThemeComponents}>
+      <CssBaseline enableColorScheme />
+      <Box sx={{ display: "flex" }}>
+        <SideMenu />
+        <AppNavbar />
+        {/* Main content */}
+        <Box
+          component="main"
+          sx={(theme) => ({
+            flexGrow: 1,
+            backgroundColor: theme.vars
+              ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
+              : alpha(theme.palette.background.default, 1),
+            overflow: "auto",
+          })}
+        >
+          <Stack
+            spacing={2}
+            sx={{
+            //   alignItems: "center",
+              mx: 3,
+              pb: 5,
+              mt: { xs: 8, md: 0 },
+            }}
+          >
+            <Header />
+            {/* <MainGrid /> */}
             {children}
-          </VerticalLayout>
-        }
-      />
-    </Providers>
-  )
+          </Stack>
+        </Box>
+      </Box>
+    </AppTheme>
+  );
 }
-
-export default Layout

@@ -33,9 +33,11 @@ class AuthStore {
       })
 
       const data = await response.json()
+      console.log(data || "empty data")
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed, try again!')
+        console.log()
+        throw new Error('Invalid Credentials, try again!')
       }
 
       this.user = data.user
@@ -49,7 +51,8 @@ class AuthStore {
       console.log('Logged in successfully', JSON.stringify(data))
     } catch (error) {
       this.error = error.message
-      console.error('Login error:', error)
+      console.error('Login error:' + error)
+      throw new Error("Login error: " + JSON.stringify(this.error));
     } finally {
       this.loading = false
     }
@@ -74,7 +77,8 @@ class AuthStore {
         this.logout()
       }
     } catch (error) {
-      console.error('Profile fetch error:', error)
+      // this.error = "Failed to fetch | check your network connetivity";
+      // throw new Error(this.error);
     }
   }
 

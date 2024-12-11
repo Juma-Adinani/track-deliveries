@@ -1,12 +1,17 @@
-const config = {
-    content: ['./src/**/*.{js,ts,jsx,tsx,css}'],
-    corePlugins: {
-        preflight: false
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+      },
     },
-    important: '#__next',
-    plugins: [require('tailwindcss-logical'), require('./src/@core/tailwind/plugin')],
-    theme: {
-        extend: {}
-    }
+  },
+  plugins: [],
 };
-export default config;

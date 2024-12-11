@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  basePath: process.env.BASEPATH
-}
+const nextConfig = {};
 
-export default nextConfig
+export default nextConfig;

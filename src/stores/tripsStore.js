@@ -33,8 +33,8 @@ class TripStore {
       this.trips = data.results
       console.log(JSON.stringify(this.trips))
     } catch (error) {
-      console.error('Error fetching trips:', error)
       this.error = error.message || 'Unknown error occurred'
+      throw new Error(this.error);
     } finally {
       this.loading = false
     }
@@ -62,8 +62,9 @@ class TripStore {
       this.trips = data
       console.log(JSON.stringify(this.trips))
     } catch (error) {
-      console.error('Error fetching trips:', error)
       this.error = error.message || 'Unknown error occurred'
+      throw new Error(this.error);
+
     } finally {
       this.loading = false
     }
@@ -98,6 +99,7 @@ class TripStore {
     } catch (error) {
       console.error('Error submitting trip rating:', error);
       this.error = error.message || 'Failed to rate the trip';
+      throw new Error(this.error);
     } finally {
       this.loading = false;
     }

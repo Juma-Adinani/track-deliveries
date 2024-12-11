@@ -1,23 +1,7 @@
-// Component Imports
-import Providers from '@components/Providers'
-import BlankLayout from '@layouts/BlankLayout'
-import NotFound from '@views/NotFound'
+import React from "react";
 
-// Util Imports
-import { getServerMode } from '@core/utils/serverHelpers'
-
-const NotFoundPage = () => {
-  // Vars
-  const direction = 'ltr'
-  const mode = getServerMode()
-
-  return (
-    <Providers direction={direction}>
-      <BlankLayout>
-        <NotFound mode={mode} />
-      </BlankLayout>
-    </Providers>
-  )
+function NotFoundPage() {
+  return <div>Oooops!, page not found</div>;
 }
 
-export default NotFoundPage
+export default NotFoundPage;
