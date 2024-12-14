@@ -51,7 +51,7 @@ class AuthStore {
       console.log('Logged in successfully', JSON.stringify(data))
     } catch (error) {
       this.error = error.message
-      console.error('Login error:' + error)
+      console.log('Login error:' + error)
       throw new Error("Login error: " + JSON.stringify(this.error));
     } finally {
       this.loading = false

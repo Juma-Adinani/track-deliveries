@@ -81,7 +81,7 @@ const TripList = observer(() => {
   const options = {
     filter: true,
     filterType: "dropdown",
-    responsive: "standard",
+    responsive: "vertical",
     selectableRows: "none",
     rowsPerPage: 10,
     rowsPerPageOptions: [10, 20, 50],
@@ -92,37 +92,37 @@ const TripList = observer(() => {
   return (
     <Box className="md:p-8 min-h-screen">
       {/* Header */}
-      <Box textAlign="center" mb={5}>
-        <Typography variant="h4" fontWeight="bold" color="primary" mb={2}>
-          Trip Activities
-        </Typography>
-      </Box>
+      {/*<Box textAlign="center" mb={5}>*/}
+      {/*  <Typography variant="h4" fontWeight="bold" color="primary" mb={2}>*/}
+      {/*    Trip Activities*/}
+      {/*  </Typography>*/}
+      {/*</Box>*/}
 
       {/* Filter Buttons */}
-      <Box display="flex" justifyContent="center" mb={3} flexWrap="wrap">
-        {Object.keys(filterMapping).map((category) => (
-          <Button
-            key={category}
-            onClick={() => setFilter(filterMapping[category])}
-            variant={
-              filter === filterMapping[category] ? "contained" : "outlined"
-            }
-            color="primary"
-            sx={{
-              borderRadius: 20,
-              mx: 0.5,
-              my: 0.5,
-              textTransform: "none",
-              fontSize: "0.9rem",
-              fontWeight:
-                filter === filterMapping[category] ? "bold" : "normal",
-              px: 2.5,
-            }}
-          >
-            {category}
-          </Button>
-        ))}
-      </Box>
+      {/*<Box display="flex" justifyContent="center" mb={3} flexWrap="wrap">*/}
+      {/*  {Object.keys(filterMapping).map((category) => (*/}
+      {/*    <Button*/}
+      {/*      key={category}*/}
+      {/*      onClick={() => setFilter(filterMapping[category])}*/}
+      {/*      variant={*/}
+      {/*        filter === filterMapping[category] ? "contained" : "outlined"*/}
+      {/*      }*/}
+      {/*      color="primary"*/}
+      {/*      sx={{*/}
+      {/*        borderRadius: 20,*/}
+      {/*        mx: 0.5,*/}
+      {/*        my: 0.5,*/}
+      {/*        textTransform: "none",*/}
+      {/*        fontSize: "0.9rem",*/}
+      {/*        fontWeight:*/}
+      {/*          filter === filterMapping[category] ? "bold" : "normal",*/}
+      {/*        px: 2.5,*/}
+      {/*      }}*/}
+      {/*    >*/}
+      {/*      {category}*/}
+      {/*    </Button>*/}
+      {/*  ))}*/}
+      {/*</Box>*/}
 
       {/* Loading Indicator */}
       {tripStore.loading && (
@@ -155,7 +155,7 @@ const TripList = observer(() => {
       {/* Data Table */}
       {!tripStore.loading && trips.length > 0 && (
         <MUIDataTable
-          title="Trip List"
+          title="Trip Activities"
           data={trips}
           columns={columns}
           options={options}
